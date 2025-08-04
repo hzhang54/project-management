@@ -108,8 +108,8 @@ Promise<void> => {
       include: {
         author: true,
         assignee: true,
-        comments: true,
-        attachments: true,
+//        comments: true,
+//        attachments: true,
       },
     });
     res.json(updatedTask);
