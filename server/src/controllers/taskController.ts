@@ -3,6 +3,18 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+interface UpdateTaskRequest {
+  title?: string;
+  description?: string;
+  status?: string;
+  priority?: string;
+  tags?: string;
+  startDate?: string;
+  dueDate?: string;
+  points?: number;
+  assignedUserId?: number;
+}
+
 export const getTasks = async (req: Request, res: Response):
 Promise<void> => {
   const { projectId } = req.query;
@@ -81,6 +93,30 @@ Promise<void> => {
   }
 };
 
+
+export const updateTask = async (req: Request<{ taskId: string }, {}, UpdateTaskRequest>, res: Response):
+Promise<void> => {
+  const { taskId } = req.params;
+  const updateData = req.body;
+
+  try {
+    const updatedTask = await prisma.task.update({
+      where: {
+        id: Number(taskId),
+      },
+      data: updateData,
+      include: {
+        author: true,
+        assignee: true,
+//        comments: true,
+//        attachments: true,
+      },
+    });
+    res.json(updatedTask);
+  } catch (error: any) {
+    res.status(500).json({ message: `Error updating task: ${error.message}` });
+  }
+};
 
 export const getUserTasks = async (req: Request, res: Response):
 Promise<void> => {
