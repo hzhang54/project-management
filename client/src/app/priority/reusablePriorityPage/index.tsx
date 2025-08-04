@@ -5,7 +5,7 @@ import Header from "@/components/Header";
 import ModalNewTask from "@/components/ModalNewTask";
 import TaskCard from "@/components/TaskCard";
 import { dataGridClassNames, dataGridSxStyles } from "@/lib/utils";
-import { Priority, Task, useGetTasksByUserQuery } from "@/state/api";
+import { Priority, Task, useGetAuthUserQuery, useGetTasksByUserQuery } from "@/state/api";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
@@ -53,7 +53,10 @@ const ReusablePriorityPage = ({ priority }: Props) => {
   const [isModalNewTaskOpen, setIsModalNewTaskOpen] = useState(false);
   // grab tasks by user using backend query, rename isError to isTasksError and get isLoading state
   // currently hardcode the userId to 1
-  const userId = 1;
+  // grab current user information using backend api for getting authenticated user query
+  const { data: currentUser } = useGetAuthUserQuery({});
+  // get userId from currentUser's user details component
+  const userId = currentUser?.userDetails?.userId ?? null;
   const {
     data: tasks,
     isError: isTasksError,

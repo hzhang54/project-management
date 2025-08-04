@@ -14,6 +14,27 @@ Promise<void> => {
   }
 };
 
+// get user information for a cogito id
+export const getUser = async (req: Request, res: Response):
+Promise<void> => {
+  // grab cognito id from request
+  const { cognitoId } = req.params;
+  try {
+    // find user by cognito id
+    const user = await prisma.user.findUnique({
+      where: {
+        cognitoId: cognitoId,
+      },
+    });
+    
+    res.json(user);
+  } catch (error: any) {
+    res
+      .status(500)
+      .json({ message: `Error retrieving user: ${error.message}` });
+  }
+};
+
 // create an async function that call prisma.user.create with username, cognito id, profilePictureURL, and team id,
 // and return the user object, and handle any errors. 
 
