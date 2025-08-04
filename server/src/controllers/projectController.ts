@@ -31,3 +31,19 @@ Promise<void> => {
     res.status(500).json({ message: `Error creating project: ${error.message}` });
   }
 };
+
+export const resetProjectSequence = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await prisma.$executeRaw`
+      SELECT setval(pg_get_serial_sequence('"Project"', 'id'), coalesce(max(id)+1, 1), false) FROM "Project"
+    `;
+
+    console.log('Sequence reset result:', result);
+    res.json({ message: 'Project sequence reset successfully', result });
+  } catch (error: any) {
+    console.error('Sequence reset error:', error);
+    res.status(500).json({ message: `Error resetting sequence: ${error.message}` });
+  }
+};
+
+

@@ -108,3 +108,17 @@ Promise<void> => {
     res.status(500).json({ message: `Error retrieving user's tasks: ${error.message} ` });
   }
 };
+
+export const resetTaskSequence = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const result = await prisma.$executeRaw`
+      SELECT setval(pg_get_serial_sequence('"Task"', 'id'), coalesce(max(id)+1, 1), false) FROM "Task"
+    `;
+    
+    console.log('Task sequence reset result:', result);
+    res.json({ message: 'Task sequence reset successfully', result });
+  } catch (error: any) {
+    console.error('Task sequence reset error:', error);
+    res.status(500).json({ message: `Error resetting task sequence: ${error.message}` });
+  }
+};
